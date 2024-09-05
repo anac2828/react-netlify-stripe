@@ -1,6 +1,27 @@
 import { createContext, useContext, useReducer } from "react";
-import { getProductData } from "./data/productsStore";
+import { getProductData } from "../data/productsStore";
+import { getPrices } from "../services/stripe";
+
 const CartContext = createContext();
+
+// const [stripePrices, setStripePrices] = useState([]);
+let stripeProductData;
+
+async function getStripePrices() {
+  const prices = await getPrices();
+  return prices;
+}
+
+getStripePrices();
+console.log(stripeProductData);
+
+// useEffect(() => {
+//   async function getStripePrices() {
+//     const prices = await getPrices();
+//     setStripePrices(prices);
+//   }
+//   getStripePrices();
+// }, [setStripePrices]);
 
 const initialState = {
   items: [],

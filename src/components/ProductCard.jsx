@@ -1,5 +1,5 @@
 import { Card, Button, Form, Row } from "react-bootstrap";
-import { useCart } from "../CartProvider";
+import { useCart } from "../providers/CartProvider";
 
 function ProductCard({ product, price }) {
   const { items, addOneItem, removeOneItem, deleteFromCart } = useCart();
@@ -15,7 +15,6 @@ function ProductCard({ product, price }) {
     removeOneItem(product.id);
   };
 
-  console.log(product);
   return (
     <Card>
       <Card.Body>
