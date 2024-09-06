@@ -23,6 +23,7 @@ export default [
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
     },
+    env: { browser: true, es2020: true },
     rules: {
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
