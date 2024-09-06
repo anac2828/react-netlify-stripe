@@ -1,19 +1,11 @@
 import { Row, Col } from "react-bootstrap";
-import { useState, useEffect } from "react";
-// import { productsArray } from "../data/productsStore";
+// import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
-import { getPrices } from "../services/stripe";
+// import { getPrices } from "../services/stripe";
+import { useProducts } from "../providers/ProductProvider";
 
 function Store() {
-  const [stripePrices, setStripePrices] = useState([]);
-
-  useEffect(() => {
-    async function getStripePrices() {
-      const prices = await getPrices();
-      setStripePrices(prices);
-    }
-    getStripePrices();
-  }, [setStripePrices]);
+  const { stripePrices } = useProducts();
 
   return (
     <>

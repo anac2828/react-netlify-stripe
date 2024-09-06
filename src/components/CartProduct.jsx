@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
 import { getProductData } from "../data/productsStore";
-import { useCart } from "../CartProvider";
+import { useCart } from "../providers/CartProvider";
 
 function CartProduct({ id, quantity }) {
   const productData = getProductData(id);

@@ -1,27 +1,8 @@
 import { createContext, useContext, useReducer } from "react";
-import { getProductData } from "../data/productsStore";
-import { getPrices } from "../services/stripe";
+// import { getProductData } from "../data/productsStore";
+import { useProducts } from "./ProductProvider";
 
 const CartContext = createContext();
-
-// const [stripePrices, setStripePrices] = useState([]);
-let stripeProductData;
-
-async function getStripePrices() {
-  const prices = await getPrices();
-  return prices;
-}
-
-getStripePrices();
-console.log(stripeProductData);
-
-// useEffect(() => {
-//   async function getStripePrices() {
-//     const prices = await getPrices();
-//     setStripePrices(prices);
-//   }
-//   getStripePrices();
-// }, [setStripePrices]);
 
 const initialState = {
   items: [],
@@ -29,27 +10,32 @@ const initialState = {
 };
 
 function reducer(state, action) {
-  // const id = action.payload;
   switch (action.type) {
     case "productQty": {
-      const findItem = state.items.find((item) => item.id === action.payload);
+      const findItem = state.items.find(
+        (item) => item.id === action.payload.id
+      );
       const quantity = findItem === undefined ? 0 : findItem.quantity;
-      console.log(action.payload, quantity);
+
       return {
         ...state,
-        currentItem: { id: action.payload, quantity },
+        currentItem: { id: action.payload.id, quantity },
       };
     }
 
     case "addOne": {
       //   Product not in cart
-      const foundItem = state.items.find((item) => item.id === action.payload);
+      const foundItem = state.items.find(
+        (item) => item.id === action.payload.id
+      );
 
       if (!foundItem)
-        return { items: [...state.items, { id: action.payload, quantity: 1 }] };
+        return {
+          items: [...state.items, { id: action.payload.id, quantity: 1 }],
+        };
       else {
         const udpatedItems = state.items.map((item) =>
-          item.id === action.payload
+          item.id === action.payload.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -59,7 +45,7 @@ function reducer(state, action) {
 
     case "removeOne": {
       const updatedItems = state.items.map((item) =>
-        item.id === action.payload
+        item.id === action.payload.id
           ? { ...item, quantity: item.quantity - 1 }
           : item
       );
@@ -70,8 +56,8 @@ function reducer(state, action) {
     case "totalCost": {
       let totalCost = 0;
       state.items.map((cartItem) => {
-        const productData = getProductData(cartItem.id);
-        totalCost += cartItem.quantity * productData.price;
+        const productData = action.payload.getProductData(cartItem.id);
+        totalCost += cartItem.quantity * (productData.unit_amount / 100);
       });
 
       return { ...state, totalCost };
@@ -79,7 +65,7 @@ function reducer(state, action) {
 
     case "delete": {
       const udpatedItems = state.items.filter(
-        (item) => item.id !== action.payload
+        (item) => item.id !== action.payload.id
       );
       return { ...state, items: udpatedItems };
     }
@@ -87,20 +73,22 @@ function reducer(state, action) {
 }
 
 function CartProvider({ children }) {
+  const { getProductData } = useProducts();
   const [{ items, totalCost }, dispatch] = useReducer(reducer, initialState);
   const getProductQty = (id) => dispatch({ type: "productQty", payload: id });
-  const getTotalCost = () => dispatch({ type: "totalCost" });
+  const getTotalCost = () =>
+    dispatch({ type: "totalCost", payload: { getProductData } });
 
   const addOneItem = (id) => {
-    dispatch({ type: "addOne", payload: id });
+    dispatch({ type: "addOne", payload: { id } });
     getTotalCost();
   };
   const removeOneItem = (id) => {
-    dispatch({ type: "removeOne", payload: id });
+    dispatch({ type: "removeOne", payload: { id } });
     getTotalCost();
   };
   const deleteFromCart = (id) => {
-    dispatch({ type: "delete", payload: id });
+    dispatch({ type: "delete", payload: { id } });
     getTotalCost();
   };
 

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
 export const stripe = new Stripe(
-  "sk_test_51PAKLvB7VKHUT2sFAGquFqN5yIWdvcEJ9FYB6gYkhOYedDwwE12KZDSTX7yJ6liliESH2uSIOvP1DLbbVOELa1n700Il19E3SQ"
+  import.meta.env.VITE_REACT_APP_STRIPE_SECRET_KEY
 );
 
 export async function getPrices() {

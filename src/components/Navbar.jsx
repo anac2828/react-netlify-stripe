@@ -1,5 +1,5 @@
 import { Button, Navbar, Modal } from "react-bootstrap";
-import { useCart } from "../CartProvider";
+import { useCart } from "../providers/CartProvider";
 import { useState } from "react";
 import CartProduct from "./CartProduct";
 

@@ -3,23 +3,38 @@ import { getPrices } from "../services/stripe";
 
 const ProductContext = createContext({
   stripeProducts: [],
+  getProductData: () => {},
 });
 
 function ProductProvider({ children }) {
-  const [products, setProducts] = useState([]);
+  const [stripePrices, setStripePrices] = useState([]);
 
   useEffect(() => {
-    async function getStripePrices() {
+    async function fetchPrices() {
       const prices = await getPrices();
-      setProducts(prices);
+      setStripePrices(prices);
     }
-    getStripePrices();
-  }, [setProducts]);
+    fetchPrices();
+  }, [setStripePrices]);
+
+  const getProductData = (id) => {
+    let productData = stripePrices.find((price) => price.id === id);
+
+    if (productData === undefined) {
+      console.log(`Product data does not exist for ID: ${id}`);
+      return undefined;
+    }
+
+    return productData;
+  };
 
   return (
-    <ProductContext.Provider value={{ products }}>
-      {children}
-    </ProductContext.Provider>
+    //
+    stripePrices.length && (
+      <ProductContext.Provider value={{ stripePrices, getProductData }}>
+        {children}
+      </ProductContext.Provider>
+    )
   );
 }
 

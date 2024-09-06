@@ -3,7 +3,7 @@ import { useCart } from "../providers/CartProvider";
 
 function ProductCard({ product, price }) {
   const { items, addOneItem, removeOneItem, deleteFromCart } = useCart();
-  const currentItem = items.find((item) => item.id === product.id);
+  const currentItem = items.find((item) => item.id === price.id);
   const quantity = currentItem === undefined ? 0 : currentItem.quantity;
   const productPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -11,8 +11,19 @@ function ProductCard({ product, price }) {
   });
 
   const handleRemoveOne = () => {
-    if (quantity === 1) deleteFromCart(product.id);
-    removeOneItem(product.id);
+    if (quantity === 1) deleteFromCart(price.id);
+    removeOneItem(price.id);
+  };
+
+  const handleCheckout = async () => {
+    const res = await fetch("/.netlify/functions/createCheckoutSession", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId: price.id }),
+    });
+    console.log(price.id);
+    const data = await res.json();
+    console.log("DATA", data);
   };
 
   return (
@@ -34,7 +45,7 @@ function ProductCard({ product, price }) {
               </Form.Label>
               <div>
                 <Button
-                  onClick={() => addOneItem(product.id)}
+                  onClick={() => addOneItem(price.id)}
                   sm="6"
                   className="mx-2"
                 >
@@ -47,16 +58,25 @@ function ProductCard({ product, price }) {
             </Form>
             <Button
               variant="danger"
-              onClick={() => deleteFromCart(product.id)}
+              onClick={() => deleteFromCart(price.id)}
               className="my-3"
             >
               Remove from cart
             </Button>
           </>
         ) : (
-          <Button variant="primary" onClick={() => addOneItem(product.id)}>
-            Add to Cart
-          </Button>
+          <>
+            <Button variant="primary" onClick={() => addOneItem(price.id)}>
+              Add to Cart
+            </Button>
+            <Button
+              variant="success"
+              onClick={handleCheckout}
+              className="mx-2 my-2"
+            >
+              Buy Now
+            </Button>
+          </>
         )}
       </Card.Body>
     </Card>
