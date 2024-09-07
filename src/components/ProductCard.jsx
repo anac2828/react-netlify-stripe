@@ -16,14 +16,16 @@ function ProductCard({ product, price }) {
   };
 
   const handleCheckout = async () => {
-    const res = await fetch("/.netlify/functions/createCheckoutSession", {
+    // After the createCheckoutSession funcition is done, the browser will redirect the user to the stripe checkout page
+    const stripe = await fetch("/.netlify/functions/createCheckoutSession", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ priceId: price.id }),
     });
-    console.log(price.id);
-    const data = await res.json();
-    console.log("DATA", data);
+    const stripeURL = await stripe.json();
+    window.location.assign(stripeURL);
   };
 
   return (

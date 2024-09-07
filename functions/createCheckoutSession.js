@@ -1,10 +1,10 @@
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.REACT_APP_STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.VITE_REACT_APP_STRIPE_SECRET_KEY);
 
 export const handler = async function (event) {
   const { priceId } = JSON.parse(event.body);
-  console.log(priceId);
+
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -18,8 +18,9 @@ export const handler = async function (event) {
     // cancel_url: "http://localhost:8888/cancel",
   });
 
+  // Browser will redirect to the stripe checkout session
   return {
     statusCode: 200,
-    body: JSON.stringify({ url: session.url }),
+    body: JSON.stringify(session.url),
   };
 };
