@@ -1,6 +1,6 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer } from 'react';
 // import { getProductData } from "../data/productsStore";
-import { useProducts } from "./ProductProvider";
+import { useProducts } from './ProductProvider';
 
 const CartContext = createContext();
 
@@ -11,7 +11,7 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "productQty": {
+    case 'productQty': {
       const findItem = state.items.find(
         (item) => item.id === action.payload.id
       );
@@ -23,7 +23,7 @@ function reducer(state, action) {
       };
     }
 
-    case "addOne": {
+    case 'addOne': {
       //   Product not in cart
       const foundItem = state.items.find(
         (item) => item.id === action.payload.id
@@ -43,7 +43,7 @@ function reducer(state, action) {
       }
     }
 
-    case "removeOne": {
+    case 'removeOne': {
       const updatedItems = state.items.map((item) =>
         item.id === action.payload.id
           ? { ...item, quantity: item.quantity - 1 }
@@ -53,7 +53,7 @@ function reducer(state, action) {
       return { ...state, items: updatedItems };
     }
 
-    case "totalCost": {
+    case 'totalCost': {
       let totalCost = 0;
       state.items.map((cartItem) => {
         const productData = action.payload.getProductData(cartItem.id);
@@ -63,7 +63,7 @@ function reducer(state, action) {
       return { ...state, totalCost };
     }
 
-    case "delete": {
+    case 'delete': {
       const udpatedItems = state.items.filter(
         (item) => item.id !== action.payload.id
       );
@@ -75,20 +75,20 @@ function reducer(state, action) {
 function CartProvider({ children }) {
   const { getProductData } = useProducts();
   const [{ items, totalCost }, dispatch] = useReducer(reducer, initialState);
-  const getProductQty = (id) => dispatch({ type: "productQty", payload: id });
+  const getProductQty = (id) => dispatch({ type: 'productQty', payload: id });
   const getTotalCost = () =>
-    dispatch({ type: "totalCost", payload: { getProductData } });
+    dispatch({ type: 'totalCost', payload: { getProductData } });
 
   const addOneItem = (id) => {
-    dispatch({ type: "addOne", payload: { id } });
+    dispatch({ type: 'addOne', payload: { id } });
     getTotalCost();
   };
   const removeOneItem = (id) => {
-    dispatch({ type: "removeOne", payload: { id } });
+    dispatch({ type: 'removeOne', payload: { id } });
     getTotalCost();
   };
   const deleteFromCart = (id) => {
-    dispatch({ type: "delete", payload: { id } });
+    dispatch({ type: 'delete', payload: { id } });
     getTotalCost();
   };
 
@@ -116,7 +116,7 @@ function CartProvider({ children }) {
 function useCart() {
   const context = useContext(CartContext);
   if (context === undefined)
-    throw new Error("Context is being used outside Provider.");
+    throw new Error('Context is being used outside Provider.');
 
   return context;
 }

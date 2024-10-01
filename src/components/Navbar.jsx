@@ -1,7 +1,8 @@
-import { Button, Navbar, Modal } from "react-bootstrap";
-import { useCart } from "../providers/CartProvider";
-import { useState } from "react";
-import CartProduct from "./CartProduct";
+import { Button, Navbar, Modal } from 'react-bootstrap';
+import { useState } from 'react';
+import { useCart } from '../providers/CartProvider';
+import stripeCheckout from '../helpers/stripeCheckout';
+import CartProduct from './CartProduct';
 
 function NavbarComponent() {
   const cart = useCart();
@@ -11,12 +12,19 @@ function NavbarComponent() {
     0
   );
 
+  const handleCheckout = async () => {
+    const items = cart.items.map((item) => {
+      return { price: item.id, quantity: item.quantity };
+    });
+    stripeCheckout(items);
+  };
+
   return (
     <>
-      <Navbar expand="sm">
-        <Navbar.Brand href="/">Netlify eStore</Navbar.Brand>
+      <Navbar expand='sm'>
+        <Navbar.Brand href='/'>Netlify eStore</Navbar.Brand>
         <Navbar.Toggle />
-        <Navbar.Collapse className="justify-content-end">
+        <Navbar.Collapse className='justify-content-end'>
           <Button onClick={() => setShow(true)}>
             Cart {productsCount} Items
           </Button>
@@ -39,7 +47,9 @@ function NavbarComponent() {
               ))}
 
               <h1>Total: ${cart.totalCost.toFixed(2)}</h1>
-              <Button variant="success">Purchase Items</Button>
+              <Button variant='success' onClick={handleCheckout}>
+                Purchase Items
+              </Button>
             </>
           ) : (
             <></>

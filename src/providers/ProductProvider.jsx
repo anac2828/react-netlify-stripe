@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { getPrices } from "../services/stripe";
+import { createContext, useState, useEffect, useContext } from 'react';
+import { getPrices } from '../services/stripe';
 
 const ProductContext = createContext({
   stripeProducts: [],
@@ -41,7 +41,7 @@ function ProductProvider({ children }) {
 function useProducts() {
   const context = useContext(ProductContext);
   if (context === undefined)
-    throw new Error("Context is being used outside Provider.");
+    throw new Error('Context is being used outside Provider.');
 
   return context;
 }
